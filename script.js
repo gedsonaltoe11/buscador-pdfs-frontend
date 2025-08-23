@@ -1,4 +1,4 @@
-const API_URL = "https://buscador-pdfs-backend.onrender.com"; // Troque pela URL do Render
+const API_URL = "https://buscador-pdfs-backend-1.onrender.com"; // Troque pela URL do Render
 
 async function buscar() {
     const termo = document.getElementById("busca").value.trim();
