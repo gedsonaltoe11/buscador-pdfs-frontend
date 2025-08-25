@@ -1,18 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de PDFs</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Buscador de PDFs Científicos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    h1 { text-align: center; color: #333; }
+    #formBusca { text-align: center; margin-bottom: 20px; }
+    input { padding: 8px; width: 300px; }
+    button { padding: 8px 12px; margin-left: 5px; cursor: pointer; }
+    .resultado { background: #fff; margin: 10px auto; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 600px; }
+    .resultado h3 { margin: 0; }
+    .resultado a { color: blue; text-decoration: none; }
+    .resultado a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📚 Buscador de Livros e Artigos</h1>
-        <input type="text" id="busca" placeholder="Digite autor, título ou tema...">
-        <button onclick="buscar()">🔍 Buscar</button>
-        <div id="resultados"></div>
-    </div>
-    <script src="script.js"></script>
+  <h1>🔎 Buscador de PDFs Científicos</h1>
+  <div id="formBusca">
+    <input type="text" id="query" placeholder="Digite título, autor ou tema...">
+    <button onclick="buscar()">Buscar</button>
+  </div>
+  <div id="resultados"></div>
+
+  <script>
+    const API_URL = "https://buscador-pdfs-backend2.onrender.com"; // troque pela URL do seu backend
+
+    async function buscar() {
+      const termo = document.getElementById("query").value.trim();
+      if (!termo) {
+        alert("Digite algo para buscar!");
+        return;
+      }
+
+      document.getElementById("resultados").innerHTML = "<p>🔎 Buscando...</p>";
+
+      try {
+        const resp = await fetch(`${API_URL}/buscar?query=${encodeURIComponent(termo)}`);
+        const dados = await resp.json();
+
+        if (!dados || dados.length === 0) {
+          document.getElementById("resultados").innerHTML = "<p>Nada encontrado 😢</p>";
+          return;
+        }
+
+        let html = "";
+        dados.forEach(item => {
+          html += `
+            <div class="resultado">
+              <h3>${item.title || "Sem título"}</h3>
+              <p><b>Autor(es):</b> ${item.authors || "Desconhecido"}</p>
+              <a href="${item.url}" target="_blank">📄 Acessar PDF</a>
+            </div>
+          `;
+        });
+
+        document.getElementById("resultados").innerHTML = html;
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById("resultados").innerHTML = "<p>Erro na busca ⚠️</p>";
+      }
+    }
+  </script>
 </body>
 </html>
